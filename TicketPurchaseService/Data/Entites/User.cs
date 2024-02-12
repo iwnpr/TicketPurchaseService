@@ -15,7 +15,7 @@ namespace TicketsPurchaseService.Data.Entites
         public Guid Id { get; set; }
         public string? Name { get; set; }
 
-        public List<Purchase>? Purchase { get; set; }               //юзер может содержать несколько покупок
+        public List<Purchase>? Purchase { get; set; }               
 
         [JsonConstructor]
         public User() { }

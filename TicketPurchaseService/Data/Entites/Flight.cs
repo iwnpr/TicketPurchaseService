@@ -20,7 +20,7 @@ namespace TicketsPurchaseService.Data.Entites
         public Cities? CityTo { get; set; }
         public DateTime? DateAndTime { get; set; }
 
-        public List<Ticket>? Tickets { get; set; }               // один машрут может ссылаться на несколько билетов
+        public List<Ticket>? Tickets { get; set; }               
 
         [JsonConstructor]
         public Flight() { }
