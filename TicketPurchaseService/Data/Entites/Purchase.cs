@@ -15,9 +15,9 @@ namespace TicketsPurchaseService.Data.Entites
 
         [ForeignKey("User")]
         public Guid UserId { get; set; }
-        public User? User { get; set; }                     //каждая покупка может сожержать только одного юзера
+        public User? User { get; set; }                     
 
-        public List<Ticket>? Tickets { get; set; }          //одна покупка может содержать несколько билетов
+        public List<Ticket>? Tickets { get; set; }          
 
     }
 }

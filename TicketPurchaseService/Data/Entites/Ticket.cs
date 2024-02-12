@@ -21,12 +21,12 @@ namespace TicketsPurchaseService.Data.Entites
 
         [ForeignKey("Flight")]
         public Guid FlightId { get; set; }
-        public Flight? Flight { get; set; }                     //билет может содержать только один маршрут
+        public Flight? Flight { get; set; }                     
 
 
         [ForeignKey("Purchase")]
         public Guid PurchaseId { get; set; }
-        public Purchase? Purchase { get; set; }                 //билет может храниться только в одной покупке
+        public Purchase? Purchase { get; set; }                 
 
 
         public bool IsSelling { get; private set; }
