@@ -1,28 +1,30 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations.Schema;
+using TicketsPurchaseService.Data.Enumerations;
 
 namespace TicketsPurchaseService.Data.Entites
 {
     public class Flight
     {
-        public Flight(Cities from, Cities to, DateTime dateAndTime)
-        {
-            CityFrom = from;
-            CityTo = to;
-            DateAndTime = dateAndTime;
-            Id = Guid.NewGuid();
-        }
-
         [Key]
         public Guid Id { get; set; }
 
-        public Cities? CityFrom { get; set; }
-        public Cities? CityTo { get; set; }
-        public DateTime? DateAndTime { get; set; }
+        public Cities? Departure { get; set; }
 
-        public List<Ticket>? Tickets { get; set; }               
+        public Cities? Arrival { get; set; }
 
-        [JsonConstructor]
-        public Flight() { }
+        public DateTime DateAndTimeOfDeparture { get; set; }
+
+        public DateTime DateAndTimeOfArrival { get; set; }
+
+        public TimeOnly TravelTime { get; set; }
+
+        public List<Ticket>? Tickets { get; set;}
+
+        [ForeignKey("Plane")]
+        public Guid PlaneId { get; set; }
+        public Plane? Plane { get; set; }
+             
+
     }
 }

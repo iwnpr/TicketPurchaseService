@@ -13,30 +13,82 @@ namespace TicketsPurchaseService.Repositories
             _context = new TicketsPurchaseServiceDbContext();
         }
 
-        public Guid AddUser(string name)
+        public bool AddUser(string login, string password, string email, int age, string phoneNumber)
         {
-            var user = new User(name);
+            try
+            {
+                var user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Login = login,
+                    Password = password,
+                    Email = email,
+                    Age = age,
+                    PhoneNumber = phoneNumber
+                };
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
+                _context.Users.Add(user);
+                Save();
 
-            return user.Id;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
         }
 
-        public void RemoveUserById(Guid userId)
+        public bool RemoveUserById(Guid userId)
         {
             var user = _context.Users.Single(x => x.Id == userId);
 
             if (user != null)
             {
                 _context.Users.Remove(user);
-                _context.SaveChanges();
+                Save();
+
+                return true;
             }
+
+            return false;
+        }
+
+        public bool UpdateUserById(Guid userId)
+        {
+            var user = _context.Users.Single(x => x.Id == userId);
+
+            if (user != null)
+            {
+                _context.Update(user);
+                return Save();
+            }
+
+            return false;
         }
 
         public IEnumerable<User> GetAllUsers()
         {
-            return _context.Users;
+            return _context.Users.ToList();
+        }
+
+        public User? GetById(Guid id)
+        {
+            var user = _context.Users.Single(x => x.Id == id);
+
+            if (user != null)
+            {
+                return user;
+            }
+
+            return null;
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+
+            return saved > 0;
         }
 
     }

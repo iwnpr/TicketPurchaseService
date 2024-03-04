@@ -1,5 +1,6 @@
 ﻿using TicketsPurchaseService.Data;
 using TicketsPurchaseService.Data.Entites;
+using TicketsPurchaseService.Data.Enumerations;
 using TicketsPurchaseService.Interfaces.Repository;
 
 namespace TicketsPurchaseService.Repositories
@@ -13,68 +14,115 @@ namespace TicketsPurchaseService.Repositories
             _context = new TicketsPurchaseServiceDbContext();
         }
 
-        public Guid AddTicket(string passengerName, Flight flight, Purchase purchase)
+        public bool AddTicket(string firstName, string lastName, Genders gender, int age, IdDocuments idDocument, int row, char location, Guid flightId)
         {
-            var ticket = new Ticket { PassengerName = passengerName, Flight = flight, Purchase = purchase };
+            try
+            {
+                var flight = _context.Flights.Single(x => x.Id == flightId);
+                var seat = flight.Plane.Seats.Single(y => y.Row == row && y.Location == location);
 
-            _context.Tickets.Add(ticket);
-            _context.SaveChanges();
+                var ticket = new Ticket
+                {
+                    Id = Guid.NewGuid(),
+                    PassengerFirstName = firstName,
+                    PassengerLastName = lastName,
+                    PassengerGender = gender,
+                    PassengerAge = age,
+                    IdDocument = idDocument,
+                    Seat = seat,
+                    FlightId = flightId
+                };
 
-            return ticket.Id;
+                _context.Tickets.Add(ticket);
+                Save();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+
         }
 
-        public void RemoveTicketById(Guid ticketId)
+        public bool RemoveTicketById(Guid ticketId)
         {
             var ticket = _context.Tickets.Single(x => x.Id == ticketId);
 
             if (ticket != null)
             {
                 _context.Tickets.Remove(ticket);
-                _context.SaveChanges();
+                Save();
+
+                return true;
             }
+
+            return false;
         }
 
-        public void ReturnTicketById(Guid ticketId)
+        public bool SellTicketById(Guid ticketId)
         {
-            var ticket = _context.Tickets.Single(x => x.Id == ticketId);
+            var ticket = _context.Tickets.Single(p => p.Id == ticketId).ToSell();
 
-            if (ticket.IsSelling == true && ticket != null)
-            {
-                ticket.Return();
-                _context.Tickets.Update(ticket);
-                _context.SaveChanges();
-            }
+            return ticket;
         }
 
-        public void SellTicketById(Guid ticketId)
+        public bool ReturnTicketById(Guid ticketId)
         {
-            var ticket = _context.Tickets.Single(x => x.Id == ticketId);
+            var ticket = _context.Tickets.Single(p => p.Id == ticketId).Return();
 
-            if (ticket.IsSelling == false && ticket != null)
-            {
-                ticket.Sell();
-                _context.Tickets.Update(ticket);
-                _context.SaveChanges();
-            }
+            return ticket;
+        }
+
+        public bool ToBookTicketById(Guid ticketId)
+        {
+            var ticket = _context.Tickets.Single(p => p.Id == ticketId).ToBook();
+
+            return ticket;
+        }
+
+        public bool AnnulBookingById(Guid ticketId)
+        {
+            var ticket = _context.Tickets.Single(p => p.Id == ticketId).AnnulBooking();
+
+            return ticket;
+        }
+
+        public Ticket GetTicketById(Guid ticketId)
+        {
+            return _context.Tickets.SingleOrDefault(x => x.Id == ticketId);
         }
 
         public IEnumerable<Ticket> GetAllTickets()
         {
-            return _context.Tickets;
+            return _context.Tickets.ToList();
+        }
+
+        public IEnumerable<Ticket> GetBookedTickets()
+        {
+            return _context.Tickets.Where(x => x.IsBooking == true);
+        }
+
+        public IEnumerable<Ticket> GetUnbookingTickets()
+        {
+            return _context.Tickets.Where(x => x.IsBooking == false);
         }
 
         public IEnumerable<Ticket> GetSoldTickets()
         {
-            var tickets = _context.Tickets.Where(t => t.IsSelling == true);
-
-            return tickets;
+            return _context.Tickets.Where(x => x.IsSelling == true);
         }
 
         public IEnumerable<Ticket> GetUnsoldTickets()
         {
-            var tickets = _context.Tickets.Where(t => t.IsSelling == false);
+            return _context.Tickets.Where(x => x.IsSelling == false);
+        }
 
-            return tickets;
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+
+            return saved > 0;
         }
 
     }

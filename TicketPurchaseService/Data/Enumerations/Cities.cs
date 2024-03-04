@@ -1,4 +1,4 @@
-﻿namespace TicketsPurchaseService.Data
+﻿namespace TicketsPurchaseService.Data.Enumerations
 {
     public enum Cities
     {

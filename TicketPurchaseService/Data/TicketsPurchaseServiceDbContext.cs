@@ -8,7 +8,11 @@ namespace TicketsPurchaseService.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Flight> Flights { get; set; }
-        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Plane> Planes { get; set; }
+        public DbSet<Seat> Seats { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -17,8 +21,10 @@ namespace TicketsPurchaseService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Flight>().Property(f => f.CityFrom).HasConversion<string>();
-            modelBuilder.Entity<Flight>().Property(f => f.CityTo).HasConversion<string>();
+            modelBuilder.Entity<Flight>().Property(f => f.Departure).HasConversion<string>();
+            modelBuilder.Entity<Flight>().Property(f => f.Arrival).HasConversion<string>();
+
+            modelBuilder.Entity<Seat>().HasKey(x => new { x.Row, x.Location });       
         }
     }
 }
